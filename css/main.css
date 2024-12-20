@@ -1,0 +1,36 @@
+.swiper-outer {
+    overflow-x: hidden;
+}
+
+.swiper-outer .swiper-wrapper {
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+}
+
+.swiper-outer .swiper-slide {
+    max-width: 160px;
+}
+
+.feed-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+.feed-item__image {
+    border-radius: 50%;
+    width: 92px;
+    height: 92px;
+
+    @media screen and (min-width: 1280px) {
+        width: 148px;
+        height: 148px;
+    }
+}
+
+.feed-item__title {
+    color: #000;
+    font-family: Arial, Helvetica, sans-serif;
+}
