@@ -57,3 +57,24 @@ var swiper2 = new Swiper(".swiper-modal", {
         },
     },
 });
+
+const progressCircle = document.querySelector(".autoplay-progress svg");
+var innerSwipers = document.querySelectorAll('.swiper-inner');
+innerSwipers.forEach(function (inner) {
+    var innerSwiper = new Swiper(inner, {
+        pagination: {
+            el: inner.querySelector('.swiper-pagination'),
+            clickable: true,
+        },
+        on: {
+            autoplayTimeLeft(s, time, progress) {
+                const activeBullet = inner.querySelector('.swiper-pagination-bullet-active::after');
+                const activeBulletElement = inner.querySelector('.swiper-pagination-bullet-active');
+                if (activeBulletElement) {
+                    activeBulletElement.style.setProperty("--progress", 1 - progress);
+                }
+            }
+        }
+    });
+    swipersInner.push(innerSwiper);
+});
