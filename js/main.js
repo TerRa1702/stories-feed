@@ -7,31 +7,47 @@ const swiper = new Swiper('.swiper-outer', {
     spaceBetween: 80,
 });
 
-var modal = document.getElementById("myModal");
-var btns = document.getElementsByClassName("feed-item");
-var span = document.getElementsByClassName("close")[0];
+const modal = document.querySelector('[data-modal="myModal"]');
+const btns = document.querySelectorAll(".feed-item");
+const closeBtn = document.querySelector(".close");
 
-for (let i = 0; i < btns.length; i++) {
-    btns[i].onclick = function (event) {
-        event.preventDefault();
-        modal.style.display = "block";
-    }
-}
-
-span.onclick = function () {
+closeBtn?.addEventListener("click", () => {
     modal.style.display = "none";
-}
+});
 
-window.onclick = function (event) {
-    if (event.target == modal) {
+window.addEventListener("click", (event) => {
+    if (event.target === modal) {
         modal.style.display = "none";
     }
-}
+});
 
+const swipersInner = [];
+const innerSwipers = document.querySelectorAll('.swiper-inner');
 
-var swipersInner = [];
+innerSwipers.forEach((inner) => {
+    const innerSwiper = new Swiper(inner, {
+        pagination: {
+            el: inner.querySelector('.swiper-pagination'),
+            clickable: true,
+        },
+        on: {
+            autoplayTimeLeft(swiper, time, progress) {
+                const activeBullet = inner.querySelector('.swiper-pagination-bullet-active');
+                if (activeBullet) {
+                    activeBullet.style.setProperty("--progress", 1 - progress);
+                }
+            },
+            slideChange() {
+                const activeIndex = this.activeIndex;
+                const swiperModal = document.querySelector('.swiper-modal').swiper;
+                if (activeIndex == 0) swiperModal.slideNext();
+            },
+        },
+    });
+    swipersInner.push(innerSwiper);
+});
 
-var swiper2 = new Swiper(".swiper-modal", {
+const swiper2 = new Swiper(".swiper-modal", {
     slidesPerView: "auto",
     spaceBetween: 100,
     centeredSlides: true,
@@ -41,40 +57,31 @@ var swiper2 = new Swiper(".swiper-modal", {
         swiper: swiper,
     },
     on: {
-        reachBeginning: function () {
-            swipersInner[0].autoplay.start();
-        },
-        slideChange: function () {
-            swipersInner.forEach(function (innerSwiper) {
-                innerSwiper.autoplay.stop();
+        slideChange() {
+            swipersInner.forEach((innerSwiper) => {
+                innerSwiper.autoplay?.stop();
             });
-
-            var activeInnerSwiper = this.slides[this.activeIndex].querySelector('.swiper-inner');
-            if (activeInnerSwiper) {
-                var activeSwiper = activeInnerSwiper.swiper;
-                activeSwiper.autoplay.start();
+            const activeSlide = this.slides[this.activeIndex];
+            const activeInnerSwiperElement = activeSlide?.querySelector('.swiper-inner');
+            if (activeInnerSwiperElement) {
+                const activeSwiper = activeInnerSwiperElement.swiper;
+                activeSwiper?.autoplay?.start();
             }
         },
     },
 });
 
-const progressCircle = document.querySelector(".autoplay-progress svg");
-var innerSwipers = document.querySelectorAll('.swiper-inner');
-innerSwipers.forEach(function (inner) {
-    var innerSwiper = new Swiper(inner, {
-        pagination: {
-            el: inner.querySelector('.swiper-pagination'),
-            clickable: true,
-        },
-        on: {
-            autoplayTimeLeft(s, time, progress) {
-                const activeBullet = inner.querySelector('.swiper-pagination-bullet-active::after');
-                const activeBulletElement = inner.querySelector('.swiper-pagination-bullet-active');
-                if (activeBulletElement) {
-                    activeBulletElement.style.setProperty("--progress", 1 - progress);
-                }
-            }
+btns.forEach((btn, index) => {
+    btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        modal.style.display = "block";
+        const activeSlide = document?.querySelectorAll('.modal .swiper-slide-modal')[index];
+        const activeInnerSwiperElement = activeSlide?.querySelector('.swiper-inner');
+        if (activeInnerSwiperElement) {
+            const activeSwiper = activeInnerSwiperElement.swiper;
+            activeSwiper?.autoplay?.start();
         }
     });
-    swipersInner.push(innerSwiper);
 });
+
+const progressCircle = document.querySelector(".autoplay-progress svg");
